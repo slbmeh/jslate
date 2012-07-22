@@ -5,8 +5,8 @@ class DATABASE_CONFIG {
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'root',
-		'password' => '',
+		'login' => 'jslate',
+		'password' => '967hCnqYebweVqBt',
 		'database' => 'jslate',
 		'prefix' => '',
 	);

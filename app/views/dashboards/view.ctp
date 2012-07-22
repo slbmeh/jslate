@@ -1,3 +1,4 @@
+<a id="fullscreenButton" style="position:absolute;right:5px;top:8px;" href="#"><?php echo $html->image("fullscreen.png", array('style'=>'width: 20px;')); ?></a>
 <?php
 	$zid=1;
     foreach ($dashboard['Dbview'] as $dbview){
