@@ -102,10 +102,7 @@ class ExceptionRenderer {
 
 		if ($exception instanceof CakeException && !$methodExists) {
 			$method = '_cakeError';
-			if (empty($template)) {
-				$template = 'error500';
-			}
-			if ($template == 'internalError') {
+			if (empty($template) || $template == 'internalError') {
 				$template = 'error500';
 			}
 		} elseif ($exception instanceof PDOException) {
@@ -119,13 +116,12 @@ class ExceptionRenderer {
 			}
 		}
 
-		if (Configure::read('debug') == 0) {
-			if ($method == '_cakeError') {
-				$method = 'error400';
-			}
-			if ($code == 500) {
-				$method = 'error500';
-			}
+		$isNotDebug = (Configure::read('debug') == 0);
+		if ($isNotDebug && $method == '_cakeError') {
+			$method = 'error400';
+		}
+		if ($isNotDebug && $code == 500) {
+			$method = 'error500';
 		}
 		$this->template = $template;
 		$this->method = $method;
@@ -146,7 +142,12 @@ class ExceptionRenderer {
 		if (!$request = Router::getRequest(true)) {
 			$request = new CakeRequest();
 		}
-		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+		$response = new CakeResponse();
+
+		if (method_exists($exception, 'responseHeader')) {
+			$response->header($exception->responseHeader());
+		}
+
 		try {
 			if (class_exists('AppController')) {
 				$controller = new CakeErrorController($request, $response);
@@ -184,7 +185,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage(),
+			'name' => h($error->getMessage()),
 			'error' => $error,
 			'_serialize' => array('code', 'url', 'name')
 		));
@@ -206,7 +207,7 @@ class ExceptionRenderer {
 		$url = $this->controller->request->here();
 		$this->controller->response->statusCode($error->getCode());
 		$this->controller->set(array(
-			'name' => $message,
+			'name' => h($message),
 			'url' => h($url),
 			'error' => $error,
 			'_serialize' => array('name', 'url')
@@ -229,7 +230,7 @@ class ExceptionRenderer {
 		$code = ($error->getCode() > 500 && $error->getCode() < 506) ? $error->getCode() : 500;
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
-			'name' => $message,
+			'name' => h($message),
 			'message' => h($url),
 			'error' => $error,
 			'_serialize' => array('name', 'message')
@@ -250,7 +251,7 @@ class ExceptionRenderer {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage(),
+			'name' => h($error->getMessage()),
 			'error' => $error,
 			'_serialize' => array('code', 'url', 'name', 'error')
 		));

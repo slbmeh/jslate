@@ -236,6 +236,13 @@ class Model extends Object implements CakeEventListener {
 	public $tablePrefix = null;
 
 /**
+ * Plugin model belongs to.
+ *
+ * @var string
+ */
+	public $plugin = null;
+
+/**
  * Name of the model.
  *
  * @var string
@@ -665,10 +672,14 @@ class Model extends Object implements CakeEventListener {
 			extract(array_merge(
 				array(
 					'id' => $this->id, 'table' => $this->useTable, 'ds' => $this->useDbConfig,
-					'name' => $this->name, 'alias' => $this->alias
+					'name' => $this->name, 'alias' => $this->alias, 'plugin' => $this->plugin
 				),
 				$id
 			));
+		}
+
+		if ($this->plugin === null) {
+			$this->plugin = (isset($plugin) ? $plugin : $this->plugin);
 		}
 
 		if ($this->name === null) {
@@ -1082,7 +1093,7 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Sets a custom table for your model class. Used by your controller to select a database table.
+ * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
  * @throws MissingTableException when database table $tableName is not found on data source
@@ -1870,7 +1881,7 @@ class Model extends Object implements CakeEventListener {
 					if ($keepExisting && !empty($links)) {
 						foreach ($links as $link) {
 							$oldJoin = $link[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
-							if (! in_array($oldJoin, $newJoins) ) {
+							if (!in_array($oldJoin, $newJoins)) {
 								$conditions[$associationForeignKey] = $oldJoin;
 								$db->delete($this->{$join}, $conditions);
 							} else {
@@ -2724,7 +2735,7 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _findCount($state, $query, $results = array()) {
 		if ($state === 'before') {
-			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count' ) {
+			if (!empty($query['type']) && isset($this->findMethods[$query['type']]) && $query['type'] !== 'count') {
 				$query['operation'] = 'count';
 				$query = $this->{'_find' . ucfirst($query['type'])}('before', $query);
 			}
@@ -2749,8 +2760,8 @@ class Model extends Object implements CakeEventListener {
 		} elseif ($state === 'after') {
 			foreach (array(0, $this->alias) as $key) {
 				if (isset($results[0][$key]['count'])) {
-					if ($query['group']) {
-						return count($results);
+					if (($count = count($results)) > 1) {
+						return $count;
 					} else {
 						return intval($results[0][$key]['count']);
 					}

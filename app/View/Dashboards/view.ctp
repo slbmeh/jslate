@@ -1,3 +1,9 @@
+<?php 
+	// If I want more secure ajax request
+	// I can set csrfUseOnce=false and use this one token
+	//echo $this->Form->create('sectokn',array('id'=>'sectoken'));
+    //echo $this->Form->end();
+?>
 <?php
 	$zid=1;
     foreach ($dashboard['Dbview'] as $dbview){
@@ -18,6 +24,15 @@
     }
     ?>
     <script type='text/javascript'>
+    	(function( $ ){
+		$.fn.serializeJSON=function() {
+		var json = {};
+		jQuery.map($(this).serializeArray(), function(n, i){
+		json[n['name']] = n['value'];
+		});
+		return json;
+		};
+		})( jQuery );
         $(function(){
 
             $(".dragbox").draggable({

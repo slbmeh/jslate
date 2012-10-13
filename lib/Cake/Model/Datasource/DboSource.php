@@ -600,7 +600,7 @@ class DboSource extends DataSource {
 		} else {
 			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
-			} elseif (isset($args[1]) && !is_array($args[1]) ) {
+			} elseif (isset($args[1]) && !is_array($args[1])) {
 				return $this->fetchAll($args[0], false);
 			} elseif (isset($args[1]) && is_array($args[1])) {
 				if (isset($args[2])) {
@@ -1767,7 +1767,7 @@ class DboSource extends DataSource {
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					} else {
 						${$var} = '';
 					}
@@ -2922,6 +2922,19 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Reset a sequence based on the MAX() value of $column.  Useful
+ * for resetting sequences after using insertMulti().
+ *
+ * This method should be implemented by datasources that require sequences to be used.
+ *
+ * @param string $table The name of the table to update.
+ * @param string $column The column to use when reseting the sequence value.
+ * @return boolean success.
+ */
+	public function resetSequence($table, $column) {
+	}
+
+/**
  * Returns an array of the indexes in given datasource name.
  *
  * @param string $model Name of model to inspect
@@ -3067,7 +3080,7 @@ class DboSource extends DataSource {
 		}
 		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');
 
-		if (isset($column['key']) && $column['key'] === 'primary' && $type === 'integer') {
+		if (isset($column['key']) && $column['key'] === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
 			$out .= ' ' . $this->columns['primary_key']['name'];
 		} elseif (isset($column['key']) && $column['key'] === 'primary') {
 			$out .= ' NOT NULL';
@@ -3113,7 +3126,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Format indexes for create table
+ * Format indexes for create table.
  *
  * @param array $indexes
  * @param string $table
@@ -3129,6 +3142,8 @@ class DboSource extends DataSource {
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
+				} elseif (!empty($value['type']) && strtoupper($value['type']) === 'FULLTEXT') {
+					$out .= 'FULLTEXT ';
 				}
 				$name = $this->startQuote . $name . $this->endQuote;
 			}

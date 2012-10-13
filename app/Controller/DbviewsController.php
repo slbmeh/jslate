@@ -3,6 +3,13 @@ class DbviewsController extends AppController {
 
 	var $name = 'Dbviews';
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+		
+		CakeLog::write('debug', 'Setting unlockedActions');
+		$this->Security->unlockedActions = array('add','edit','update','delete');
+	}
+	
 	function add($dashboard_id, $template = null) {
 		if (!empty($template) && !empty($dashboard_id)) {
 			$this->Dbview->create();

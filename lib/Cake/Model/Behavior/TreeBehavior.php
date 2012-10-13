@@ -18,6 +18,7 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::uses('ModelBehavior', 'Model');
 
 /**
  * Tree Behavior.
@@ -178,7 +179,7 @@ class TreeBehavior extends ModelBehavior {
 		extract($this->settings[$Model->alias]);
 
 		$this->_addToWhitelist($Model, array($left, $right));
-		if (!$Model->id || !$Model->exists()) {
+		if (!$Model->id) {
 			if (array_key_exists($parent, $Model->data[$Model->alias]) && $Model->data[$Model->alias][$parent]) {
 				$parentNode = $Model->find('first', array(
 					'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
