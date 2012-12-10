@@ -6,3 +6,5 @@ app/tmp/*
 app/config/database.php
 !empty
 .settings
+.DS_Store
+nbproject/*
