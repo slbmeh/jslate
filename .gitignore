@@ -1,8 +1,14 @@
 .idea
 *.iml
-tmp/*
+tmp/logs/*
+tmp/cache/*
+tmp/sessions/*
+tmp/test/*
 Config/database.php
-app/tmp/*
+app/tmp/sessions/*
+app/tmp/logs/*
+app/tmp/cache/*
+app/tmp/test/*
 app/Config/database.php
 !empty
 .settings
