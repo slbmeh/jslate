@@ -73,11 +73,11 @@
 				function toggleFullscreen() {
 					if (fullscreenActive) {
 						$(".dragbox").css({border: "1px solid #222"});
-						$("a#fullscreenButton").html("<?php echo addslashes($html->image("fullscreen.png", array('style' => 'width: 20px;'))); ?>")
+						$("a#fullscreenButton").html("<?php echo addslashes($this->Html->image("fullscreen.png", array('style' => 'width: 20px;'))); ?>")
 						fullscreenActive = false;
 					} else {
 						$(".dragbox").css({border: "none"});
-						$("a#fullscreenButton").html("<?php echo addslashes($html->image("fullscreen_exit.png", array('style' => 'width: 20px;'))); ?>")
+						$("a#fullscreenButton").html("<?php echo addslashes($this->Html->image("fullscreen_exit.png", array('style' => 'width: 20px;'))); ?>")
 						fullscreenActive = true;
 					}
 					$(".header").toggle();

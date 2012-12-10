@@ -1,4 +1,4 @@
-<a id="fullscreenButton" style="position:absolute;right:5px;top:8px;" href="#"><?php echo $html->image("fullscreen.png", array('style' => 'width: 20px;')); ?></a>
+<a id="fullscreenButton" style="position:absolute;right:5px;top:8px;" href="#"><?php echo $this->Html->image("fullscreen.png", array('style' => 'width: 20px;')); ?></a>
 <?php
 // If I want more secure ajax request
 // I can set csrfUseOnce=false and use this one token
