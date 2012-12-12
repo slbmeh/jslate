@@ -31,45 +31,70 @@ App::uses('Controller', 'Controller');
  * @package       app.Controller
  * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
+
+/**
+ * @property RequestHandlerComponent $RequestHandler
+ * @property SessionComponent $Session
+ * @property AuthComponent $Auth
+ * @property SecurityComponent $Security
+ * @property Dashboard $Dashboard
+ */
 class AppController extends Controller {
-    public $layout = 'clean';
-    public $components = array(		
-    	'RequestHandler',
-    	'Session',
-//	    'Auth' => array(
-//	            'loginRedirect' => array('controller' => 'posts', 'action' => 'index'),
-//	            'logoutRedirect' => array('controller' => 'pages', 'action' => 'display', 'home')
-//	        ),
-								    'Auth' => array(
-								        'authenticate' => array(
-								            'Form' => array(
-								                'userModel' => 'User',
-								                'fields' => array(
-								                    'username' => 'email',
-								                    'password' => 'password'
-								                )
-								            )
-								        )
-								    ),
-    	'Security');
-    public $helpers = array('Form', 'Html', 'Js', 'Time', 'Session');
+	public $layout = 'clean';
+	public $components = array(		
+		'RequestHandler',
+		'Session',
+//		'Auth' => array(
+//			'loginRedirect' => array('controller' => 'posts', 'action' => 'index'),
+//			'logoutRedirect' => array('controller' => 'pages', 'action' => 'display', 'home')
+//		),
+		'Auth' => array(
+			'authenticate' => array(
+				'Form' => array(
+					'userModel' => 'User',
+					'fields' => array(
+						'username' => 'email',
+						'password' => 'password'
+					)
+				)
+			)
+		),
+		'Security'
+	);
+	
+	public $helpers = array(
+		'Form',
+		'Html',
+		'Js',
+		'Time',
+		'Session'
+	);
 
-    function beforeFilter(){
+	public function beforeFilter(){
 
-    	/*$this->Auth->authenticate = array('Form');
-        $this->Auth->fields = array(
-            'username' => 'email',
-            'password' => 'password'
-        );*/
-        $this->loadModel('Dashboard');
-        $this->Security->validatePost = false;
-        
-        if($this->Auth->user('id')!==null){
-            $this->set('dblist', $this->Dashboard->find('list', array(
-                'conditions' => array(
-                    'user_id' => $this->Auth->user('id')
-                )
-            )));
-        }
-    }
+		/*$this->Auth->authenticate = array('Form');
+		$this->Auth->fields = array(
+			'username' => 'email',
+			'password' => 'password'
+		);*/
+		$this->loadModel('Dashboard');
+		$this->Security->validatePost = false;
+		
+		$public_dashboards = $this->Dashboard->find('list', array(
+			'conditions'	=> array(
+				'is_public'	=> 1
+			)
+		));
+		
+		if($this->Auth->user('id')!==null){
+			$user_dashboards = $this->Dashboard->find('list', array(
+				'conditions'	=> array(
+					'user_id'	=> $this->Auth->user('id')
+				)
+			));
+			$this->set('dblist', array_merge($public_dashboards, $user_dashboards));
+		} else {
+			$this->set('dblist', $public_dashboards);
+		}
+	}
 }

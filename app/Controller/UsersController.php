@@ -1,24 +1,26 @@
 <?php
+/**
+ * @property User $User
+ */
 class UsersController extends AppController {
 
 	var $name = 'Users';
 
-	function  beforeFilter() {
-		$this->Auth->allow('add');
+	public function  beforeFilter() {
+		$this->Auth->allow('register');
 
 		parent::beforeFilter();
-
 	}
 
-	function logout(){
+	public function logout() {
 		$this->redirect($this->Auth->logout());
 	}
 
-	function index() {
+	public function index() {
 		$this->redirect(array('action' => 'view'));
 	}
 
-	function login(){
+	public function login(){
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				return $this->redirect($this->Auth->redirect());
@@ -28,7 +30,7 @@ class UsersController extends AppController {
 		}
 	}
 
-	function view() {
+	public function view() {
 		$id = $this->Auth->user('id');
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid user', true));
@@ -37,9 +39,8 @@ class UsersController extends AppController {
 		$this->set('user', $this->User->read(null, $id));
 	}
 
-	function add() {
+	public function register() {
 		if (!empty($this->data)) {
-			//if($this->data['User']['password'] == $this->Auth->password($this->data['User']['password2'])) {
 			if($this->data['User']['password'] == $this->data['User']['password2']) {
 				$this->User->create();
 
@@ -50,7 +51,7 @@ class UsersController extends AppController {
 				} else {
 					$this->Session->setFlash(__('The user could not be saved. Please, try again.', true));
 				}
-			}else{
+			} else {
 				$this->Session->setFlash('The provided passwords did not match. Please try again.');
 
 			}
@@ -60,26 +61,7 @@ class UsersController extends AppController {
 
 	}
 
-	/*function edit() {
-	 $id = $this->Auth->user('id');
-		if (!$id && empty($this->data)) {
-		$this->Session->setFlash(__('Invalid user', true));
-		$this->redirect(array('action' => 'index'));
-		}
-		if (!empty($this->data)) {
-		if ($this->User->save($this->data)) {
-		$this->Session->setFlash(__('The user has been saved', true));
-		$this->redirect(array('action' => 'index'));
-		} else {
-		$this->Session->setFlash(__('The user could not be saved. Please, try again.', true));
-		}
-		}
-		if (empty($this->data)) {
-		$this->data = $this->User->read(null, $id);
-		}
-		}*/
-
-	function delete() {
+	public function delete() {
 		$id = $this->Auth->user('id');
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for user', true));

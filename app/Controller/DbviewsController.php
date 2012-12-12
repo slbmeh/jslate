@@ -1,7 +1,10 @@
 <?php
+/**
+ * @property Dbview $Dbview
+ */
 class DbviewsController extends AppController {
 
-	var $name = 'Dbviews';
+	public $name = 'Dbviews';
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -10,7 +13,7 @@ class DbviewsController extends AppController {
 		$this->Security->unlockedActions = array('add','edit','update','delete');
 	}
 	
-	function add($dashboard_id, $template = null) {
+	public function add($dashboard_id, $template = null) {
 		if (!empty($template) && !empty($dashboard_id)) {
 			$this->Dbview->create();
 
@@ -35,7 +38,7 @@ class DbviewsController extends AppController {
 		$this->set(compact('templates','dashboard_id'));
 	}
 
-	function edit($id = null) {
+	public function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid widget', true));
 			$this->redirect(array('action' => 'index'));
@@ -55,7 +58,7 @@ class DbviewsController extends AppController {
 		$this->set(compact('dashboards','dashboard_id'));
 	}
 
-	function update($id = null) {
+	public function update($id = null) {
 		$this->autoRender = false;
 
 		if (!$id && empty($this->data)) {
@@ -78,7 +81,7 @@ class DbviewsController extends AppController {
 		}
 	}
 
-	function delete($id = null) {
+	public function delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for widget', true));
 			$this->redirect($this->referer());
